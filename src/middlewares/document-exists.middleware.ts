@@ -14,7 +14,8 @@ export class DocumentExistsMiddleware implements MiddlewareInterface {
 
   public async execute({params}: Request, _res: Response, next: NextFunction): Promise<void> {
     const documentId = params[this.paramName];
-    if (!await this.service.exists(documentId)) {
+    const docExists = await this.service.exists(documentId);
+    if (!docExists) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
         `${this.entityName} with ${documentId} not found.`,

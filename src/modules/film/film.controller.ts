@@ -20,8 +20,6 @@ import CommentResponse from '../comment/response/comment.response.js';
 import {DocumentExistsMiddleware} from '../../middlewares/document-exists.middleware.js';
 import {GenreEnum} from '../../types/genre.enum.js';
 import MovieListItemResponse from './response/film-items-list.response.js';
-import {DocumentType} from '@typegoose/typegoose';
-import {FilmEntity} from './film.entity.js';
 import {PrivateRouteMiddleware} from '../../middlewares/private-route.middleware.js';
 
 type ParamsGetFilm = {
@@ -97,12 +95,7 @@ export default class FilmController extends Controller {
 
   async index(req: Request<unknown, unknown, unknown, QueryParamsGetFilm>, res: Response): Promise<void> {
     const {genre, limit} = req.query;
-    let films: DocumentType<FilmEntity>[];
-    if (genre){
-      films = await this.filmService.findByGenre(genre, limit);
-    } else {
-      films = await this.filmService.find(limit);
-    }
+    const films = genre ? await this.filmService.findByGenre(genre, limit) : await this.filmService.find(limit);
     this.ok(res, fillDTO(MovieListItemResponse, films));
   }
 
